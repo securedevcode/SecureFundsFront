@@ -1,0 +1,22 @@
+# *
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://securefundsfinance.com/sitemap.xml
+
+# Disallow admin and private areas
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+# Allow common crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
