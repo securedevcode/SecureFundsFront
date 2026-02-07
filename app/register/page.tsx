@@ -65,7 +65,7 @@ export default function RegisterPage() {
               </h2>
 
               <button
-                onClick={() => signIn("google")}
+                
                 className="w-full border border-slate-200 py-3 font-semibold hover:bg-off-white flex items-center justify-center gap-3"
               >
                 <img src="/google.svg" className="w-5" />
