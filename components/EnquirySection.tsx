@@ -2,8 +2,107 @@
 
 import { useState } from "react";
 
+const emojiRegex =
+  /[\u{1F300}-\u{1FAFF}|\u{2600}-\u{26FF}|\u{2700}-\u{27BF}]/u;
+
 export default function EnquirySection() {
+  const [form, setForm] = useState({
+    loanType: "Personal Loan",
+    name: "",
+    phone: "",
+    city: "",
+    income: "Below ₹20,000",
+  });
+
   const [consent, setConsent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  function sanitize(value: string) {
+    return value.replace(emojiRegex, "").trim();
+  }
+
+  function validate() {
+    if (form.name.length < 2 || form.name.length > 50) {
+      return "Name must be 2 to 50 characters";
+    }
+
+    if (!/^[A-Za-z\s]+$/.test(form.name)) {
+      return "Name must contain only letters";
+    }
+
+    if (!/^[6-9]\d{9}$/.test(form.phone)) {
+      return "Invalid mobile number";
+    }
+
+    if (form.city.length < 2 || form.city.length > 30) {
+      return "City must be 2 to 30 characters";
+    }
+
+    if (!/^[A-Za-z\s]+$/.test(form.city)) {
+      return "City must contain only letters";
+    }
+
+    if (!consent) {
+      return "Consent is required";
+    }
+
+    return "";
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    setMessage("");
+
+    const error = validate();
+
+    if (error) {
+      setMessage(error);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        throw new Error();
+      }
+
+      setMessage("Enquiry submitted successfully");
+
+      setForm({
+        loanType: "Personal Loan",
+        name: "",
+        phone: "",
+        city: "",
+        income: "Below ₹20,000",
+      });
+
+      setConsent(false);
+    } catch {
+      setMessage("Something went wrong. Please try again.");
+    }
+
+    setLoading(false);
+  }
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: sanitize(value),
+    }));
+  }
 
   return (
     <section
@@ -24,14 +123,23 @@ export default function EnquirySection() {
 
         <div className="bg-white border border-slate-200 shadow-lg p-10">
 
-          <form className="space-y-8">
+          <form
+            className="space-y-8"
+            onSubmit={handleSubmit}
+            noValidate
+          >
 
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
                 Type of Loan
               </label>
 
-              <select className="w-full border-slate-200 py-3 text-sm">
+              <select
+                name="loanType"
+                value={form.loanType}
+                onChange={handleChange}
+                className="w-full border-slate-200 py-3 text-sm"
+              >
                 <option>Personal Loan</option>
                 <option>Home Loan</option>
                 <option>Business Loan</option>
@@ -47,7 +155,12 @@ export default function EnquirySection() {
                 </label>
 
                 <input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  maxLength={50}
                   type="text"
+                  required
                   className="w-full border-slate-200 py-3 text-sm"
                   placeholder="Your Name"
                 />
@@ -59,7 +172,12 @@ export default function EnquirySection() {
                 </label>
 
                 <input
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  maxLength={10}
                   type="tel"
+                  required
                   className="w-full border-slate-200 py-3 text-sm"
                   placeholder="10-digit Mobile"
                 />
@@ -73,7 +191,12 @@ export default function EnquirySection() {
               </label>
 
               <input
+                name="city"
+                value={form.city}
+                onChange={handleChange}
+                maxLength={30}
                 type="text"
+                required
                 className="w-full border-slate-200 py-3 text-sm"
                 placeholder="Your City"
               />
@@ -84,7 +207,12 @@ export default function EnquirySection() {
                 Income Range
               </label>
 
-              <select className="w-full border-slate-200 py-3 text-sm">
+              <select
+                name="income"
+                value={form.income}
+                onChange={handleChange}
+                className="w-full border-slate-200 py-3 text-sm"
+              >
                 <option>Below ₹20,000</option>
                 <option>₹20,000 – ₹40,000</option>
                 <option>₹40,000 – ₹75,000</option>
@@ -113,11 +241,18 @@ export default function EnquirySection() {
 
             </div>
 
+            {message && (
+              <div className="text-center text-sm font-semibold text-emerald-corporate">
+                {message}
+              </div>
+            )}
+
             <button
-              disabled={!consent}
+              type="submit"
+              disabled={!consent || loading}
               className="w-full bg-navy hover:bg-navy-light text-white py-4 text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50"
             >
-              Submit Enquiry
+              {loading ? "Submitting..." : "Submit Enquiry"}
             </button>
 
           </form>

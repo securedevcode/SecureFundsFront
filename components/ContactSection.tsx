@@ -31,7 +31,14 @@ export default function ContactSection() {
               Send an Enquiry
             </h3>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onClick={()=>{
+              await fetch("/api/send-email", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(formData),
+});
+
+            }}  >
 
 
               <div>
@@ -62,7 +69,7 @@ export default function ContactSection() {
 
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
-                  Email (Optional)
+                  Email 
                 </label>
 
                 <input

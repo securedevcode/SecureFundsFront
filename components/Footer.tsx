@@ -40,7 +40,7 @@ export default function Footer() {
             <div className="flex gap-4">
 
               <a
-                href="mailto:support@securefundsfinance.com"
+                href="mailto:secure1funds@gmail.com"
                 className="w-8 h-8 flex items-center justify-center text-navy border border-slate-200 hover:bg-navy hover:text-white transition-all"
               >
 
@@ -51,7 +51,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="https://wa.me/91XXXXXXXXXX"
+                href="https://wa.me/9711863158"
                 target="_blank"
                 className="w-8 h-8 flex items-center justify-center text-navy border border-slate-200 hover:bg-navy hover:text-white transition-all"
               >
@@ -131,14 +131,7 @@ export default function Footer() {
                 </Link>
               </li>
 
-              <li>
-                <Link
-                  href="/contact"
-                  className="hover:text-emerald-corporate transition-colors"
-                >
-                  Contact Us
-                </Link>
-              </li>
+            
 
             </ul>
 
@@ -165,7 +158,7 @@ export default function Footer() {
 
                 <address className="text-[11px] leading-relaxed text-slate-600 font-medium not-italic">
 
-                  Mumbai, Maharashtra, India
+                  Noida, Uttar Pradesh, India
 
                 </address>
 
@@ -184,7 +177,7 @@ export default function Footer() {
                   className="text-[11px] font-bold text-navy hover:text-emerald-corporate transition-colors"
                 >
 
-                  +91-XXXXXXXXXX
+                  +91-9711863158
 
                 </a>
 

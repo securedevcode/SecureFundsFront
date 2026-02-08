@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <>
       <StructuredData />
-      <Header />
+      {/* <Header /> */}
 
       <main>
         <Hero />
@@ -27,7 +27,7 @@ export default function Home() {
         {/* <CTASection /> */}
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

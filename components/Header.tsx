@@ -2,9 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+
+  const pathname = usePathname();
+
+  const homeLink = (hash: string) => {
+    return pathname === "/" ? hash : `/${hash}`;
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
@@ -18,7 +25,7 @@ export default function Header() {
               src="/securefundsfinancelogo.png"
               width={28}
               height={28}
-              alt="Logo"
+              alt="SecureFundsFinance Logo"
             />
           </div>
 
@@ -34,33 +41,35 @@ export default function Header() {
 
         </Link>
 
+
         <nav className="hidden lg:flex items-center gap-10">
 
-          <Link href="#loans" className="nav-link">
+          <Link href={homeLink("#loans")} className="nav-link">
             Loan Types
           </Link>
 
-          <Link href="#services" className="nav-link">
+          <Link href={homeLink("#services")} className="nav-link">
             Services
           </Link>
 
-          <Link href="#process" className="nav-link">
+          <Link href={homeLink("#process")} className="nav-link">
             How It Works
           </Link>
 
-          <Link href="#enquiry" className="nav-link">
+          <Link href={homeLink("#enquiry")} className="nav-link">
             Check Eligibility
           </Link>
 
-          <Link href="#contact" className="nav-link">
+          <Link href={homeLink("#contact")} className="nav-link">
             Contact
           </Link>
 
         </nav>
 
+
         <div className="hidden lg:flex items-center gap-6">
 
-          <Link href="#enquiry">
+          <Link href={homeLink("#enquiry")}>
 
             <button className="bg-navy hover:bg-navy-light text-white text-xs font-bold uppercase tracking-widest px-8 py-3 transition-all shadow-sm">
               Free Enquiry
@@ -69,6 +78,7 @@ export default function Header() {
           </Link>
 
         </div>
+
 
         <button
           onClick={() => setOpen(!open)}
@@ -83,6 +93,7 @@ export default function Header() {
 
       </div>
 
+
       {open && (
 
         <div className="lg:hidden border-t border-slate-200 bg-white shadow-md">
@@ -90,7 +101,7 @@ export default function Header() {
           <div className="px-6 py-6 space-y-5">
 
             <Link
-              href="#loans"
+              href={homeLink("#loans")}
               onClick={() => setOpen(false)}
               className="block text-sm font-semibold text-navy"
             >
@@ -98,7 +109,7 @@ export default function Header() {
             </Link>
 
             <Link
-              href="#services"
+              href={homeLink("#services")}
               onClick={() => setOpen(false)}
               className="block text-sm font-semibold text-navy"
             >
@@ -106,7 +117,7 @@ export default function Header() {
             </Link>
 
             <Link
-              href="#process"
+              href={homeLink("#process")}
               onClick={() => setOpen(false)}
               className="block text-sm font-semibold text-navy"
             >
@@ -114,7 +125,7 @@ export default function Header() {
             </Link>
 
             <Link
-              href="#enquiry"
+              href={homeLink("#enquiry")}
               onClick={() => setOpen(false)}
               className="block text-sm font-semibold text-navy"
             >
@@ -122,16 +133,20 @@ export default function Header() {
             </Link>
 
             <Link
-              href="#contact"
+              href={homeLink("#contact")}
               onClick={() => setOpen(false)}
               className="block text-sm font-semibold text-navy"
             >
               Contact
             </Link>
 
+
             <div className="pt-4 border-t border-slate-100">
 
-              <Link href="#enquiry" onClick={() => setOpen(false)}>
+              <Link
+                href={homeLink("#enquiry")}
+                onClick={() => setOpen(false)}
+              >
 
                 <button className="w-full bg-navy text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-navy-light transition-all">
                   Free Enquiry

@@ -28,7 +28,7 @@ export default function LoanExplorer() {
   const visibleLoans = query ? filtered : loans.slice(0, 6);
 
   return (
-    <section className="bg-off-white py-28 border-t border-slate-200">
+    <section id="loans" className="bg-off-white py-28 border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-6 space-y-14">
 
         <div className="text-center max-w-3xl mx-auto">
