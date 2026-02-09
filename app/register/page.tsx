@@ -10,7 +10,7 @@ export default function RegisterPage() {
   return (
     <main className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
 
-      {/* LEFT PANEL */}
+    
       <section
         className="hidden lg:flex flex-col justify-between p-16 text-white bg-cover bg-center"
         style={{
@@ -34,8 +34,6 @@ export default function RegisterPage() {
           © 2026 SecureFundsFinance India Pvt Ltd
         </p>
       </section>
-
-
       {/* RIGHT PANEL */}
       <section className="flex items-center justify-center px-6">
 
