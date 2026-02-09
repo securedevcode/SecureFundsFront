@@ -1,22 +1,111 @@
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
+import { canSend, getRemainingTime } from "../../lib/rateLimit";
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  try {
+    const body = await req.json();
 
-  const { name, email, phone, city, loanType } = body;
+    const { name, email, phone, city, loanType } = body;
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+
+    if (!name || !email || !phone || !city || !loanType) {
+      return NextResponse.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const ip =
+  req.headers.get("x-forwarded-for") ||
+  req.headers.get("x-real-ip") ||
+  "unknown";
+
+const userKey = `${email}_${ip}`;
+
+if (!canSend(userKey)) {
+  const remaining = getRemainingTime(userKey);
+
+  const hours = Math.ceil(remaining / (1000 * 60 * 60));
+
+  return NextResponse.json(
+    {
+      success: false,
+      error: `You can submit only once per day. Try again after ${hours} hours.`,
     },
-  });
+    { status: 429 }
+  );
+}
 
-await transporter.sendMail({
+
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      return NextResponse.json(
+        { success: false, error: "Email  missing" },
+        { status: 500 }
+      );
+    }
+
+    if (!process.env.OWNER) {
+      return NextResponse.json(
+        { success: false, error: "Try later" },
+        { status: 500 }
+      );
+    }
+
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+
+    // await Promise.all([
+
+    //   transporter.sendMail({
+    //     from: `"SecureFunds Finance" <${process.env.EMAIL_USER}>`,
+    //     to: process.env.OWNER.trim(),
+    //     subject: "New Loan Enquiry | SecureFunds Finance",
+    //     html: `
+    //       <h2>New Loan Enquiry</h2>
+    //       <p><b>Name:</b> ${name}</p>
+    //       <p><b>Email:</b> ${email}</p>
+    //       <p><b>Phone:</b> ${phone}</p>
+    //       <p><b>City:</b> ${city}</p>
+    //       <p><b>Loan:</b> ${loanType}</p>
+    //     `,
+    //   }),
+
+ 
+    //   transporter.sendMail({
+    //     from: `"SecureFunds Finance" <${process.env.EMAIL_USER}>`,
+    //     to: email.trim(),
+    //     subject: "We Have Received Your Enquiry",
+    //     html: `
+    //       <p>Dear ${name},</p>
+
+    //       <p>Thank you for contacting SecureFunds Finance.</p>
+
+    //       <p>
+    //         We provide general loan-related information and referral assistance only.
+    //         Our team will contact you shortly.
+    //       </p>
+
+    //       <p>
+    //         Regards,<br/>
+    //         SecureFunds Team
+    //       </p>
+    //     `,
+    //   }),
+    // ]);
+
+    
+  await Promise.all([ 
+    transporter.sendMail({
   from: `"SecureFunds Finance" <${process.env.EMAIL_USER}>`,
-  to: process.env.EMAIL_USER,
+  to: process.env.OWNER,
   subject: "New Loan Enquiry | SecureFunds Finance",
   html: `
   <div style="background:#f8fafc;padding:40px 0;font-family:Arial,Helvetica,sans-serif;">
@@ -123,8 +212,7 @@ await transporter.sendMail({
 
   </div>
   `,
-});
-await transporter.sendMail({
+}), transporter.sendMail({
   from: `"SecureFunds Finance" <${process.env.EMAIL_USER}>`,
   to: email,
   subject: "We Have Received Your Enquiry",
@@ -143,9 +231,23 @@ await transporter.sendMail({
       SecureFunds Team
     </p>
   `,
-});
+})])
 
+    // console.log("Emails sent to:", process.env.OWNER, email);
 
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    console.error("MAIL ERROR:", err);
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Email sending failed",
+      },
+      { status: 500 }
+    );
+  }
 }
+
+
+

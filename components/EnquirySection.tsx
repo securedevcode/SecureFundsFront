@@ -10,6 +10,7 @@ export default function EnquirySection() {
     loanType: "Personal Loan",
     name: "",
     phone: "",
+    email:"",
     city: "",
     income: "Below ₹20,000",
   });
@@ -182,7 +183,22 @@ export default function EnquirySection() {
                   placeholder="10-digit Mobile"
                 />
               </div>
+               <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">
+                  Email
+                </label>
 
+                <input
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  maxLength={100}
+                  type="email"
+                  required
+                  className="w-full border-slate-200 py-3 text-sm"
+                  placeholder="Your Email where we can contact you"
+                />
+              </div>
             </div>
 
             <div>
